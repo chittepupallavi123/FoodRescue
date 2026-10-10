@@ -29,7 +29,7 @@ FoodRescue connects food providers with verified recipient organizations and col
 3. From the project root run `npm install`.
 4. Start the backend: `npm run dev --workspace backend`
 5. In a second terminal start the frontend: `npm run dev --workspace frontend`
-6. Open `http://localhost:5173`. Backend health: `http://localhost:4000/api/v1/health`.
+6. Open `http://localhost:5174`. Backend health: `http://localhost:4000/api/v1/health`.
 
 If MongoDB is not configured, the API returns a service-unavailable response and the health endpoint reports database status as disconnected. It does not switch to fake data.
 
