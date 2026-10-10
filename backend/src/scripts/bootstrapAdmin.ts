@@ -1,0 +1,13 @@
+import { assertRuntimeConfig, env } from '../config/env.js';
+import { connectDatabase } from '../config/db.js';
+import { User } from '../models/User.js';
+import { hashPassword, isStrongPassword } from '../utils/security.js';
+assertRuntimeConfig();
+if (!env.MONGODB_URI) throw new Error('Set MONGODB_URI in backend/.env before bootstrapping an administrator.');
+if (!env.ADMIN_BOOTSTRAP_EMAIL || !env.ADMIN_BOOTSTRAP_PASSWORD) throw new Error('Set ADMIN_BOOTSTRAP_EMAIL and ADMIN_BOOTSTRAP_PASSWORD in backend/.env first.');
+if (!isStrongPassword(env.ADMIN_BOOTSTRAP_PASSWORD)) throw new Error('Admin password must be 12–128 characters.');
+await connectDatabase();
+if (await User.exists({ email: env.ADMIN_BOOTSTRAP_EMAIL.toLowerCase() })) throw new Error('That email already exists. Bootstrap did not change any account.');
+const user = await User.create({ email: env.ADMIN_BOOTSTRAP_EMAIL.toLowerCase(), passwordHash: await hashPassword(env.ADMIN_BOOTSTRAP_PASSWORD), displayName: 'Platform Administrator', role: 'admin', emailVerifiedAt: new Date() });
+console.info(`Administrator created: ${user.email}. Store credentials securely.`);
+process.exit(0);
